@@ -1,7 +1,7 @@
 var jsdom = require('jsdom'),
   jQuery = require('jquery');
 
-function createPreviewCreator (lib) {
+function createPreviewCreator (lib, utils) {
   'use strict';
 
   var q = lib.q;
@@ -12,12 +12,20 @@ function createPreviewCreator (lib) {
   PreviewCreator.prototype.destroy = function(){
   };
 
-  PreviewCreator.prototype.doPreview = function(url){
+  PreviewCreator.prototype.doPreview = function(url, myDefer){
     if (!url){
-      return;
-      //TODO better check with regexp from Parser
+      return q(new lib.Error('NO_URL', 'No URL given for preview'));
     }
-    var defer = q.defer();
+    if (utils.urlPattern.test(url)){
+      //donothing
+    } else if (utils.pseudoUrlPattern.test(url)){
+      url = 'https://' + url;
+    } else {
+      console.log('Malformed URL', url);
+      //TODO throw?
+      return q(new lib.Error('MALFORMED_URL', 'Malformed URL given for preview: ' + url));
+    }
+    var defer = myDefer || q.defer();
     var params = {};
     var previewObj = {
       url: null,
@@ -43,9 +51,16 @@ function createPreviewCreator (lib) {
     var parsedDom,
       jQueryObj;
     if (result.statusCode !== 200){
-      console.log('Error fetching data from given URL:', previewObj.url);
-      defer.resolve(null);
-      return;
+      if (previewObj.url.indexOf('https://') >= 0){
+        console.log('Getting error for https, trying http');
+        previewObj.url = previewObj.url.replace('https://','http://');
+        this.doPreview(previewObj.url, defer);
+        return;
+      }else{
+        console.log('Error fetching data from given URL:', previewObj.url, result);
+        defer.resolve(result);
+        return;
+      }
     }
     parsedDom = new jsdom.JSDOM(result.data);
     jQueryObj = jQuery(parsedDom.window);

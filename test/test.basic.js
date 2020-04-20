@@ -8,6 +8,8 @@ var _reqresp = [{
       image: 'https://i.ytimg.com/vi/v-BvRlsbUiU/maxresdefault.jpg',
       imageSize: 0
     }
+},{
+  req: "www.youtube.com/watch?v=v-BvRlsbUiU",
 }];
 
 function runTest (func, reqresp) {
@@ -59,6 +61,17 @@ describe('Basic Test', function(){
     this.timeout(1e7);
     return expect(
       Lib.createPreviewInParallelProcess(_reqresp[0].req)
+    ).to.eventually.contain(_reqresp[0].resp);
+  });
+  it('Preview example 1 - pseudoUrl', function(){
+    return expect(
+      PreviewCreator.doPreview(_reqresp[1].req)
+    ).to.eventually.contain(_reqresp[0].resp);
+  });
+  it('Preview from parallel process - pseudoUrl', function () {
+    this.timeout(1e7);
+    return expect(
+      Lib.createPreviewInParallelProcess(_reqresp[1].req)
     ).to.eventually.contain(_reqresp[0].resp);
   });
   it('Deinit', function () {

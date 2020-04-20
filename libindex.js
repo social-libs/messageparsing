@@ -2,7 +2,8 @@ function createLib (execlib) {
   var lib = execlib.lib,
     q = lib.q,
     qlib = lib.qlib,
-    webindex = require('./webindex.js')(execlib),
+    utils = require('./utils.js')(lib),
+    webindex = require('./webindex.js')(execlib, utils),
     createPreviewInParallelProcess = require('./createpreviewcreator')(lib),
     MessageParser = webindex.Parser;
 
@@ -13,7 +14,7 @@ function createLib (execlib) {
   return {
     Parser: MessageParser,
 //    PreviewCreator: PreviewCreator
-    PreviewCreator: require('./previewcreatorcreator')(lib), //pitanje je kome ovo treba u AllexJS svetu, ali ako treba evo mu ga ovde,
+    PreviewCreator: require('./previewcreatorcreator')(lib, utils), //pitanje je kome ovo treba u AllexJS svetu, ali ako treba evo mu ga ovde,
     createPreviewInParallelProcess: createPreviewInParallelProcess,
     deInit: deInit
   };

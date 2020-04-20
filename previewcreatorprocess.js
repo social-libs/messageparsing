@@ -1,7 +1,8 @@
 process.on('message', onMsg);
 var lib = require('allexlib'); //!!
+var utils = require('./utils.js')(lib);
 
-var PreviewCreatorKlass = require('./previewcreatorcreator')(lib),
+var PreviewCreatorKlass = require('./previewcreatorcreator')(lib, utils),
   PreviewCreator = new PreviewCreatorKlass();
 
 
