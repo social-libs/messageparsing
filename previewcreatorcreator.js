@@ -23,9 +23,9 @@ function createPreviewCreator (lib, utils) {
     } else {
       console.log('Malformed URL', url);
       //TODO throw?
-      return q(new lib.Error('MALFORMED_URL', 'Malformed URL given for preview: ' + url));
+      return q(new lib.Error('MALFORMED_URL', 'Malformed URL given for preview: "' + url + '"'));
     }
-    var defer = myDefer || q.defer();
+    var defer = myDefer || q.defer(), ret = defer.promise;
     var params = {};
     var previewObj = {
       url: null,
@@ -42,9 +42,9 @@ function createPreviewCreator (lib, utils) {
       parameters: params,
       method: 'GET',
       onComplete: this.onUrlFetched.bind(this, defer, previewObj),
-      onError: defer.resolve.bind(null)
+      onError: defer.resolve.bind(defer, null)
     });
-    return defer.promise;
+    return ret;
   };
 
   PreviewCreator.prototype.onUrlFetched = function(defer, previewObj, result){

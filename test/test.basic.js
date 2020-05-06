@@ -8,8 +8,6 @@ var _reqresp = [{
       image: 'https://i.ytimg.com/vi/v-BvRlsbUiU/maxresdefault.jpg',
       imageSize: 0
     }
-},{
-  req: "www.youtube.com/watch?v=v-BvRlsbUiU",
 }];
 
 function runTest (func, reqresp) {
@@ -44,34 +42,23 @@ describe('Basic Test', function(){
   it ('Make a PreviewCreator instance', function () {
     return setGlobal('PreviewCreator', new Lib.PreviewCreator());
   });
-  /*
-  it('Preview example 1', function(){
-    return expect(
-      PreviewCreator.doPreview("https://rs.n1info.com/Svet/a418380/Bivsi-savetnik-u-predizbornoj-kampanji-Donalda-Trampa-osudjen-na-14-dana-zatvora.html")
-    //).to.match(/<a href=\"http:\/\/www.example.com\">http:\/\/www.example.com<\/a>/);
-    ).to.be.a('string');
+  it ('Find previewables', function () {
+    console.log( Parser.findPreviewables("Find me at http://www.example.com and also at http://stackoverflow.com") );
   });
-  */
+  it ('Find previewable with query', function () {
+    console.log( Parser.findPreviewables("Find me at https://www.youtube.com/watch?v=v-BvRlsbUiU and also at http://stackoverflow.com") );
+  });
   it('Preview example 1', function(){
     return expect(
       PreviewCreator.doPreview(_reqresp[0].req)
     ).to.eventually.contain(_reqresp[0].resp);
   });
+  /*
+  */
   it('Preview from parallel process', function () {
     this.timeout(1e7);
     return expect(
       Lib.createPreviewInParallelProcess(_reqresp[0].req)
-    ).to.eventually.contain(_reqresp[0].resp);
-  });
-  it('Preview example 1 - pseudoUrl', function(){
-    return expect(
-      PreviewCreator.doPreview(_reqresp[1].req)
-    ).to.eventually.contain(_reqresp[0].resp);
-  });
-  it('Preview from parallel process - pseudoUrl', function () {
-    this.timeout(1e7);
-    return expect(
-      Lib.createPreviewInParallelProcess(_reqresp[1].req)
     ).to.eventually.contain(_reqresp[0].resp);
   });
   it('Deinit', function () {

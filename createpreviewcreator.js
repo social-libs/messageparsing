@@ -9,7 +9,7 @@ function createCreatePreview (lib) {
     if (_childprocess) {
       return _childprocess;
     }
-    _childprocess = cp.fork('./previewcreatorprocess.js', {stdio:'inherit'});
+    _childprocess = cp.fork(require('path').join(__dirname, 'previewcreatorprocess.js'), {stdio:'inherit'});
     _childprocess.on('close', console.log.bind(console, 'PreviewCreator child process closed'));
     _childprocess.on('message', onFromProcess);
   }

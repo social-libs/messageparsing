@@ -20,6 +20,15 @@ function createLib (execlib, utils) {
     return this.urlify(text);
 	};
 
+  MessageParser.prototype.findPreviewables = function (text) {
+    var ret = [], r;
+    while (r = utils.urlPattern.exec(text)) {
+      //console.log(r);
+      ret.push(r[0]);
+    }
+    return ret;
+  };
+
   return {
     Parser: MessageParser
   };
