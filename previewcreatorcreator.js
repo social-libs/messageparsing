@@ -16,6 +16,7 @@ function createPreviewCreator (lib, utils) {
     if (!url){
       return q(new lib.Error('NO_URL', 'No URL given for preview'));
     }
+    utils.resetRegExes();
     if (utils.urlPattern.test(url)){
       //donothing
     } else if (utils.pseudoUrlPattern.test(url)){
@@ -39,6 +40,10 @@ function createPreviewCreator (lib, utils) {
     previewObj.url = url;
     previewObj.root = splitUrl[0] + '//' + splitUrl[2];
     lib.request(url, {
+      headers: {
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'user-agent': 'Mozilla/5.0'
+      },
       parameters: params,
       method: 'GET',
       onComplete: this.onUrlFetched.bind(this, defer, previewObj),
@@ -51,8 +56,9 @@ function createPreviewCreator (lib, utils) {
     var parsedDom,
       jQueryObj;
     if (result.statusCode !== 200){
+      console.log('Getting error for https', result.statusCode, 'for', previewObj.url);
       if (previewObj.url.indexOf('https://') >= 0){
-        console.log('Getting error for https, trying http');
+        console.log('Trying http');
         previewObj.url = previewObj.url.replace('https://','http://');
         this.doPreview(previewObj.url, defer);
         return;

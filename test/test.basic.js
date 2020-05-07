@@ -8,6 +8,16 @@ var _reqresp = [{
       image: 'https://i.ytimg.com/vi/v-BvRlsbUiU/maxresdefault.jpg',
       imageSize: 0
     }
+},{
+  req: 'https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url',
+  resp: {
+      url: 'https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url',
+      root: 'https://www.stackoverflow.com',
+      title: 'add title',
+      description: 'add descrp',
+      image: 'add imglink',
+      imageSize: 0
+  }
 }];
 
 function runTest (func, reqresp) {
@@ -60,6 +70,12 @@ describe('Basic Test', function(){
     return expect(
       Lib.createPreviewInParallelProcess(_reqresp[0].req)
     ).to.eventually.contain(_reqresp[0].resp);
+  });
+  it('Preview from parallel process 2', function () {
+    this.timeout(1e7);
+    return expect(
+      Lib.createPreviewInParallelProcess(_reqresp[1].req)
+    ).to.eventually.contain(_reqresp[1].resp);
   });
   it('Deinit', function () {
     Lib.deInit();

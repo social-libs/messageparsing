@@ -9,10 +9,17 @@ function createUtils (lib){
   // Email addresses
   var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
 
+  function resetRegExes () {
+    urlPattern.lastIndex = 0;
+    pseudoUrlPattern.lastIndex = 0;
+    emailAddressPattern.lastIndex = 0;
+  }
+
   return {
     urlPattern : urlPattern,
     pseudoUrlPattern : pseudoUrlPattern,
-    emailAddressPattern : emailAddressPattern
+    emailAddressPattern : emailAddressPattern,
+    resetRegExes: resetRegExes
   };
 }
 
