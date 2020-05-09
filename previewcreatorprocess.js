@@ -7,24 +7,42 @@ var PreviewCreatorKlass = require('./previewcreatorcreator')(lib, utils),
 
 
 function onMsg (msg){
-  var id;
+  var id, pc;
   if (!(msg && msg.id && msg.url)) {
     return;
   }
   id = msg.id;
-  PreviewCreator.doPreview(msg.url).then(
-    doResolve.bind(null, id),
-    doReject.bind(null, id)
-  );
+  if (!msg.savehtmlas) {
+    PreviewCreator.doPreview(msg.url).then(
+      doResolve.bind(null, null, id),
+      doReject.bind(null, null, id)
+    );
+  } else {
+    pc = new PreviewCreatorKlass({savehtmlas: msg.savehtmlas});
+    pc.doPreview(msg.url).then(
+      doResolve.bind(null, pc, id),
+      doReject.bind(null, pc, id)
+    );
+    pc = null;
+  }
   id = null;
 }
 
-function doResolve (id, preview) {
+function doResolve (previewcreator, id, preview) {
   process.send({id: id, preview: preview});
+  optionallyDestroyPreviewCreator(pc);
 }
 
-function doReject (id, error) {
+function doReject (previewcreator, id, error) {
   process.send({id: id, error: error.toString()});
+  optionallyDestroyPreviewCreator(pc);
+}
+
+function optionallyDestroyPreviewCreator (pc) {
+  if (pc) {
+    pc.destroy();
+  }
+  pc = null;
 }
 
 process.stdin.read();

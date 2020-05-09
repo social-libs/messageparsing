@@ -1,5 +1,6 @@
 var _reqresp = [{
   req: "https://www.youtube.com/watch?v=v-BvRlsbUiU",
+  savehtmlas: 'youtube_kids.html',
   resp: {
       url: 'https://www.youtube.com/watch?v=v-BvRlsbUiU',
       root: 'https://www.youtube.com',
@@ -10,9 +11,21 @@ var _reqresp = [{
     }
 },{
   req: 'https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url',
+  savehtmlas: 'stackoverflow_1.html',
   resp: {
       url: 'https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url',
-      root: 'https://www.stackoverflow.com',
+      root: 'https://stackoverflow.com',
+      title: 'What is a good regular expression to match a URL?',
+      description: 'add descrp',
+      image: 'add imglink',
+      imageSize: 0
+  }
+},{
+  req: 'https://www.w3schools.com/tags/tag_img.asp',
+  savehtmlas: 'w3schools_img.html',
+  resp: {
+      url: 'https://www.w3schools.com/tags/tag_img.asp',
+      root: 'https://www.w3schools.com',
       title: 'add title',
       description: 'add descrp',
       image: 'add imglink',
@@ -36,6 +49,15 @@ function testIt(func, title) {
     ).to.eventually.contain(_reqresp.map(responder));//_reqresp[0].resp);
   });
 }
+
+function doPreview (previewobj) {
+  //previewobj properties:
+  //url
+  //savehtmlas
+  var pc = new Lib.PreviewCreator({savehtmlas: previewobj.savehtmlas});
+  return pc.doPreview(previewobj.url);
+}
+
 describe('Basic Test', function(){
   it ('Load lib', function () {
     return setGlobal('Lib', require('..')(execlib));
@@ -49,9 +71,6 @@ describe('Basic Test', function(){
     ).to.match(/<a href=\"http:\/\/www.example.com\" target="_blank">http:\/\/www.example.com<\/a>/);
     //).to.be.a('string');
   });
-  it ('Make a PreviewCreator instance', function () {
-    return setGlobal('PreviewCreator', new Lib.PreviewCreator());
-  });
   it ('Find previewables', function () {
     console.log( Parser.findPreviewables("Find me at http://www.example.com and also at http://stackoverflow.com") );
   });
@@ -60,7 +79,7 @@ describe('Basic Test', function(){
   });
   it('Preview example 1', function(){
     return expect(
-      PreviewCreator.doPreview(_reqresp[0].req)
+      doPreview({url: _reqresp[0].req})
     ).to.eventually.contain(_reqresp[0].resp);
   });
   /*
@@ -68,14 +87,20 @@ describe('Basic Test', function(){
   it('Preview from parallel process', function () {
     this.timeout(1e7);
     return expect(
-      Lib.createPreviewInParallelProcess(_reqresp[0].req)
+      Lib.createPreviewInParallelProcess({url: _reqresp[0].req, savehtmlas: _reqresp[0].savehtmlas})
     ).to.eventually.contain(_reqresp[0].resp);
   });
   it('Preview from parallel process 2', function () {
     this.timeout(1e7);
     return expect(
-      Lib.createPreviewInParallelProcess(_reqresp[1].req)
+      Lib.createPreviewInParallelProcess({url: _reqresp[1].req, savehtmlas: _reqresp[1].savehtmlas})
     ).to.eventually.contain(_reqresp[1].resp);
+  });
+  it('Preview from parallel process 3', function () {
+    this.timeout(1e7);
+    return expect(
+      Lib.createPreviewInParallelProcess({url: _reqresp[2].req, savehtmlas: _reqresp[2].savehtmlas})
+    ).to.eventually.contain(_reqresp[2].resp);
   });
   it('Deinit', function () {
     Lib.deInit();

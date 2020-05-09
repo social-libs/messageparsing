@@ -30,10 +30,19 @@ function createCreatePreview (lib) {
     //or else - nothing
   }
 
-  function createPreview (url) {
-    var previd = lib.uid();
+  function createPreview (urlobj) {
+    var previd = lib.uid(), url, savehtmlas;
+    if (lib.isString(urlobj)) {
+      url = urlobj;
+      savehtmlas = null;
+    } else if (lib.isVal(urlobj) && 'url' in urlobj) {
+      url = urlobj.url;
+      savehtmlas = urlobj.savehtmlas || null;
+    } else {
+      return q(null);
+    }
     ensureChildProcess();
-    _childprocess.send({id: previd, url: url});
+    _childprocess.send({id: previd, url: url, savehtmlas: savehtmlas});
     return map.promise(previd);
   }
 
