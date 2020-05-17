@@ -18,7 +18,7 @@ function createCreatePreview (lib) {
     if (!(msg && msg.id)) {
       return;
     }
-    if (msg.preview) {
+    if ('preview' in msg) {
       map.resolve(msg.id, msg.preview);
     }
     if (msg.error) {
@@ -47,7 +47,9 @@ function createCreatePreview (lib) {
   }
 
   createPreview.stop = function () {
-    _childprocess.kill();
+    if (_childprocess) {
+      _childprocess.kill();
+    }
   };
 
   return createPreview;

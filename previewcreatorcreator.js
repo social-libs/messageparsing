@@ -2,7 +2,7 @@ function createPreviewCreator (lib, utils) {
   'use strict';
 
   var q = lib.q,
-    parseHtml = require('./htmlparser_jquery')(lib);
+    parseHtml = require('./htmlparser_regex')(lib); //require('./htmlparser_jquery')(lib);
 
   function PreviewCreator(options){
     this.savehtmlas = options ? options.savehtmlas : null;
@@ -12,7 +12,7 @@ function createPreviewCreator (lib, utils) {
     this.savehtmlas = null;
   };
 
-  PreviewCreator.prototype.doPreview = function(url, myDefer){
+  PreviewCreator.prototype.doPreview = function(url, myDefer, relocated){
     if (!url){
       return q(new lib.Error('NO_URL', 'No URL given for preview'));
     }
@@ -39,7 +39,7 @@ function createPreviewCreator (lib, utils) {
     var splitUrl = url.split('/');
     previewObj.url = url;
     previewObj.root = splitUrl[0] + '//' + splitUrl[2];
-    lib.request(url, {
+    lib.request(relocated || url, {
       headers: {
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'user-agent': 'Mozilla/5.0'
@@ -49,11 +49,24 @@ function createPreviewCreator (lib, utils) {
       onComplete: this.onUrlFetched.bind(this, defer, previewObj),
       onError: defer.resolve.bind(defer, null)
     });
+    /*
+    defer = null;
+    previewObj = null;
+    */
     return ret;
   };
 
   PreviewCreator.prototype.onUrlFetched = function(defer, previewObj, result){
-    if (result.statusCode !== 200){
+    //if (result.statusCode !== 200){
+    switch (result.statusCode) {
+      case 200:
+        break;
+      case 302:
+        if (result.headers && result.headers.location) {
+          return this.doPreview(previewObj.url, defer, result.headers.location);
+        }
+        break;
+      default:
       console.log('Getting error for https', result.statusCode, 'for', previewObj.url);
       if (previewObj.url.indexOf('https://') >= 0){
         console.log('Trying http');
@@ -62,7 +75,7 @@ function createPreviewCreator (lib, utils) {
         return;
       }else{
         console.log('Error fetching data from given URL:', previewObj.url, result);
-        defer.resolve(result);
+        defer.resolve(null);
         return;
       }
     }
