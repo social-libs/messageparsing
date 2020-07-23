@@ -1,8 +1,13 @@
+var probe = require('probe-image-size');
 function createPreviewCreator (lib, utils) {
   'use strict';
 
   var q = lib.q,
-    parseHtml = require('./htmlparser_regex')(lib); //require('./htmlparser_jquery')(lib);
+    //parseHtml = require('./htmlparser_jquery')(lib)
+    //parseHtml = require('./htmlparser_regex')(lib)
+    //parseHtml = require('./htmlparser_node-html-parser')(lib)
+    parseHtml = require('./htmlparser_htmlparser2')(lib)
+    ; 
 
   function PreviewCreator(options){
     this.savehtmlas = options ? options.savehtmlas : null;
@@ -34,7 +39,9 @@ function createPreviewCreator (lib, utils) {
       title: null,
       description: null,
       image: null,
-      imageSize: 0
+      imageSize: 0,
+      imageWidth: '',
+      imageHeight: ''
     };
     var splitUrl = url.split('/');
     previewObj.url = url;
@@ -83,6 +90,23 @@ function createPreviewCreator (lib, utils) {
       require('fs').writeFileSync(this.savehtmlas, result.data);
     }
     lib.extend(previewObj, parseHtml(result.data));
+    if (previewObj.image) {
+      probe(previewObj.image, this.onProbed.bind(this, defer, previewObj));
+      defer = null;
+      previewObj = null;
+      return;
+    }
+    defer.resolve(previewObj);
+  };
+
+  PreviewCreator.prototype.onProbed = function (defer, previewObj, probeerr, proberesult) {
+    if (probeerr) {
+      defer.resolve(previewObj);
+      return;
+    }
+    previewObj.imageWidth = proberesult.width+proberesult.wUnits;
+    previewObj.imageHeight = proberesult.height+proberesult.hUnits;
+    previewObj.image = proberesult.url;
     defer.resolve(previewObj);
   };
 

@@ -23,7 +23,11 @@
   "dependencies": {
     "jsdom": "16.x",
     "jquery": "3.x",
-    "allexlib": "3.x"
+    "allexlib": "3.x",
+    "probe-image-size": "5.x",
+    "html-entities": "1.x",
+    "node-html-parser": "1.x",
+    "htmlparser2": "4.x"
   },
   "author": "Luka Petrovic <lukapetrovicsi@gmail.com>",
   "license": "ISC",

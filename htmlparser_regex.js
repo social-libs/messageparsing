@@ -1,8 +1,9 @@
+var entities = new (require('html-entities').AllHtmlEntities)();
 function createHtmlParser_regex (lib) {
   'use strict';
 
   var regexes = {
-    title: /<title>.*<\/title>/i,
+    title: /<title[^>]*>.*<\/title>/i,
     metaogtitle: /<meta[^>]*og:title\s*=\s*[^>]*>/i,
     metadescription: /<meta[^>]*['"]{1}description['"]{1}[^>]*>/i,
     metaogdescription: /<meta[^>]*og:description[^>]*>/i,
@@ -12,14 +13,16 @@ function createHtmlParser_regex (lib) {
   };
 
   function find (string, regexname, index) {
-    var regex = regexes[regexname], ret=[], fnd, p;
+    var regex = regexes[regexname], ret=[], fnd, p, pdecoded;
     if (!regex) {
       return ret;
     }
     regex.lastIndex = 0;
     while (fnd = regex.exec(string)) {
       p = lib.isNumber(index) ? fnd[index] : fnd;
-      ret.push(p);
+      //ret.push(p);
+      pdecoded = entities.decode(p);
+      ret.push(pdecoded);
       if (!regex.global) {
         break;
       }
@@ -38,10 +41,11 @@ function createHtmlParser_regex (lib) {
   }
 
   function contentsoftag(string, regexname) {
-    var f = find(string, regexname, 0), ret;
+    var f = find(string, regexname, 0);
     if (!f) {
       return '';
     }
+    console.log(regexname, '=>', f, f.length, f[0]);
     if (f.length<1) {
       return '';
     }
@@ -59,7 +63,7 @@ function createHtmlParser_regex (lib) {
         //console.log('na', regexnames[i], 'nasao', ret);
         return ret;
       }
-      //console.log('na', regexnames[i], 'nema NISTA');
+      console.log('na', regexnames[i], 'nema NISTA');
     }
     return '';
   }

@@ -7,7 +7,9 @@ var _reqresp = [{
       title: 'Red Yellow Green Blue | + More Kids Songs | Super Simple Songs - YouTube',
       description: 'Watch videos from Super Simple in the Super Simple App for iOS! ► http://apple.co/2nW5hPd Sing along with The Bumble Nums to this color-themed song for kids,...',
       image: 'https://i.ytimg.com/vi/v-BvRlsbUiU/maxresdefault.jpg',
-      imageSize: 0
+      imageSize: 0,
+      imageWidth: '1280px',
+      imageHeight: '720px'
     }
 },{
   req: 'https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url',
@@ -18,7 +20,9 @@ var _reqresp = [{
       title: 'javascript - What is a good regular expression to match a URL? - Stack Overflow',
       description: 'Currently I have an input box which will detect the URL and parse the data.&#xA;&#xA;So right now, I am using:&#xA;&#xA;var urlR = /^(?:([A-Za-z]&#x2B;):)?(\\/{0,3})([0-9.\\-A-Za-z]&#x2B;)&#xA;           (?::(\\d&#x2B;))?(?:\\/([^?#]*))...',
       image: 'https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon@2.png?v=73d79a89bded',
-      imageSize: 0
+      imageSize: 0,
+      imageWidth: '316px',
+      imageHeight: '316px'
   }
 },{
   req: 'https://www.w3schools.com/tags/tag_img.asp',
@@ -32,6 +36,19 @@ var _reqresp = [{
       imageSize: 0
   }
 },{
+  req: 'https://www.npmjs.com/package/probe-image-size',
+  savehtmlas: 'npmjs.html',
+  resp: {
+      url: 'https://www.npmjs.com/package/probe-image-size',
+      root: 'https://www.npmjs.com',
+      title: 'probe-image-size  -  npm',
+      description: 'Get image size without full download (JPG, GIF, PNG, WebP, BMP, TIFF, PSD)',
+      image: 'https://static.npmjs.com/338e4905a2684ca96e08c7780fc68412.png',
+      imageSize: 0,
+      imageWidth: '1200px',
+      imageHeight: '630px'
+  }
+},{
   req: 'https://youtu.be/mjWkm3tvrRA',
   savehtmlas: 'youtu.be.html',
   resp: {
@@ -40,12 +57,15 @@ var _reqresp = [{
       title: 'Santana - Hope You&#39;re Feeling Better - 8/18/1970 - Tanglewood (Official) - YouTube',
       description: 'Santana - Hope You&#39;re Feeling Better Recorded Live: 8/18/1970 - Tanglewood - Lenox, MA More Santana at Music Vault: http://www.musicvault.com Subscribe to Mu...',
       image: 'https://i.ytimg.com/vi/mjWkm3tvrRA/hqdefault.jpg',
-      imageSize: 0
+      imageSize: 0,
+      imageWidth: '480px',
+      imageHeight: '360px'
   }
 }];
 
 function testInprocIt (testobj) {
   it('Test inproc preview '+testobj.req, function () {
+    this.timeout(1e4);
     var ret = expect(
       doPreview({url: testobj.req, savehtmlas: testobj.savehtmlas})
     ).to.eventually.contain(testobj.resp);
@@ -55,6 +75,7 @@ function testInprocIt (testobj) {
 }
 function testParallelprocIt (testobj) {
   it('Test inproc preview '+testobj.req, function () {
+    this.timeout(1e4);
     var ret = expect(
       Lib.createPreviewInParallelProcess({url: testobj.req, savehtmlas: testobj.savehtmlas})
     ).to.eventually.contain(testobj.resp);
@@ -73,6 +94,7 @@ function doPreview (previewobj) {
 
 describe('Basic Test', function(){
   it ('Load lib', function () {
+    this.timeout(1e5);
     return setGlobal('Lib', require('..')(execlib));
   });
   it ('Make a Parser instance', function () {
