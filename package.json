@@ -1,6 +1,6 @@
 {
   "name": "social_messageparsinglib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AllexJS for parsing social messages",
   "main": "index.js",
   "directories": {

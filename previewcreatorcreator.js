@@ -69,12 +69,14 @@ function createPreviewCreator (lib, utils) {
       case 200:
         break;
       case 302:
+      case 303:
         if (result.headers && result.headers.location) {
           return this.doPreview(previewObj.url, defer, result.headers.location);
         }
         break;
       default:
       console.log('Getting error for https', result.statusCode, 'for', previewObj.url);
+      console.log(result);
       if (previewObj.url.indexOf('https://') >= 0){
         console.log('Trying http');
         previewObj.url = previewObj.url.replace('https://','http://');
